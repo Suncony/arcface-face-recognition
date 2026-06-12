@@ -1,7 +1,9 @@
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 
 from torchvision import models, transforms, datasets
+
 
 class ArcFaceModel(nn.Module):
     def __init__(self, num_classes):
@@ -44,6 +46,7 @@ class ArcFaceModel(nn.Module):
                 nn.init.kaiming_normal_(m.weight)
                 nn.init.constant_(m.bias, 0)
 
+
     def forward(self, x):
         x = self.base.conv1(x)
         x = self.base.bn1(x)
@@ -63,3 +66,17 @@ class ArcFaceModel(nn.Module):
         x = torch.flatten(x, 1)
         x = self.classifier(x)
         return x
+    
+# Improved loss function with label smoothing and regularization
+class SmoothCrossEntropyLoss(nn.Module):
+    def __init__(self, smoothing=0.1):
+        super(SmoothCrossEntropyLoss, self).__init__()
+        self.smoothing = smoothing
+        
+    def forward(self, pred, target):
+        n_classes = pred.size(1)
+        one_hot = torch.zeros_like(pred).scatter(1, target.unsqueeze(1), 1)
+        smooth_one_hot = one_hot * (1 - self.smoothing) + self.smoothing / n_classes
+        log_prob = F.log_softmax(pred, dim=1)
+        loss = (-smooth_one_hot * log_prob).sum(dim=1).mean()
+        return loss

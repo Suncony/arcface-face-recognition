@@ -2,8 +2,10 @@ import os
 import bz2
 import shutil
 import requests
+import torch
 
 from tqdm import tqdm
+
 
 # Function to download files with progress bar
 def download_file(url, filename):
@@ -17,6 +19,7 @@ def download_file(url, filename):
             progress_bar.update(len(data))
             file.write(data)
     progress_bar.close()
+
 
 # Function to extract bz2 files
 def extract_bz2(filename):
