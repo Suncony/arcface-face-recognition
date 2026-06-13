@@ -8,8 +8,6 @@ from matplotlib.patches import Rectangle
 from sklearn.model_selection import train_test_split
 from torch.utils.data import Dataset, DataLoader, random_split
 from torchvision.utils import make_grid
-
-DATASET_ROOT = "dataset"  # Đường dẫn đến thư mục chứa dữ liệu LFW đã được tổ chức lại
     
 def prepare_data():
     train_transforms = transforms.Compose([
@@ -34,8 +32,8 @@ def prepare_data():
     ])
 
     # Load the LFW dataset with different transformations for training and validation sets
-    lfw_dataset_train = datasets.ImageFolder(root=DATASET_ROOT, transform=train_transforms)
-    lfw_dataset_val = datasets.ImageFolder(root=DATASET_ROOT, transform=val_transforms)
+    lfw_dataset_train = datasets.ImageFolder(root="data", transform=train_transforms)
+    lfw_dataset_val = datasets.ImageFolder(root="data", transform=val_transforms)
 
     # Extract labels from the dataset
     labels = [label for _, label in lfw_dataset_train]
